@@ -1,6 +1,6 @@
 # CSAPP Lab
 
-- [ ] lab1: Data Lab
+- [ ] lab1: [Data Lab](https://github.com/JahJahWei/ppasc/tree/DataLab)
 - [ ] lab2: Bomb Lab
 - [ ] lab3: Attack Lab
 - [ ] lab4: Buffer Lab
