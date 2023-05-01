@@ -175,7 +175,11 @@ int isTmax(int x) {
  *   Rating: 2
  */
 int allOddBits(int x) {
-  return 2;
+  //0101 0101 << 8 = 0101 0101 0000 0000 | 0101 0101 = 0101 0101 0101 0101
+  int a = 0xAA;
+  int aa = (a << 8) | a; //0xAAAA
+  int mask = (aa << 16) | aa; //0xAAAAAAAA
+  return !((x & mask) ^ mask); // x == y like !(x ^ y)
 }
 /* 
  * negate - return -x 
@@ -185,7 +189,7 @@ int allOddBits(int x) {
  *   Rating: 2
  */
 int negate(int x) {
-  return 2;
+  return ~x + 1;
 }
 //3
 /* 
@@ -198,7 +202,12 @@ int negate(int x) {
  *   Rating: 3
  */
 int isAsciiDigit(int x) {
-  return 2;
+  int a=!(x >> 4 ^0x3);
+  int b=x&0xF;
+  int c=~0xA+1;
+  int e=0x80<<4;
+  int d=!!((b+c)&(e));
+  return a&d;
 }
 /* 
  * conditional - same as x ? y : z 
@@ -208,7 +217,8 @@ int isAsciiDigit(int x) {
  *   Rating: 3
  */
 int conditional(int x, int y, int z) {
-  return 2;
+  int mask= ~!x+1; 
+  return (y & ~mask)|(z & mask);
 }
 /* 
  * isLessOrEqual - if x <= y  then return 1, else return 0 
@@ -218,7 +228,17 @@ int conditional(int x, int y, int z) {
  *   Rating: 3
  */
 int isLessOrEqual(int x, int y) {
-  return 2;
+  int first_condition = !(x ^ y); // x == y
+
+  int signX = (x >> 31) & 0x1;
+  int signY = (y >> 31) & 0x1;
+
+  int second_condition = !((!signX) & (signY));
+  int third_condition = signX & (!signY);
+
+  int res = (x + (~y) + 1) >> 31;
+
+  return first_condition || (second_condition && (third_condition || res));
 }
 //4
 /* 
@@ -230,7 +250,10 @@ int isLessOrEqual(int x, int y) {
  *   Rating: 4 
  */
 int logicalNeg(int x) {
-  return 2;
+  int negX = ~x + 1;
+  int sign = (negX | x) >> 31;
+
+  return sign + 1;
 }
 /* howManyBits - return the minimum number of bits required to represent x in
  *             two's complement
